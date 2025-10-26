@@ -1,0 +1,34 @@
+name: Build PSP Game
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (may require customization)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git wget python3 python3-pip
+          # The PSPSDK packages are not typically available on Ubuntu out-of-the-box.
+          # If you have a Docker image with PSPSDK, replace this step with docker usage.
+          echo "Ensure PSPSDK is installed on the runner or use a self-hosted runner/Docker."
+
+      - name: Build (attempt)
+        run: |
+          make || true
+
+      - name: Upload artifact (EBOOT.PBP if produced)
+        uses: actions/upload-artifact@v4
+        with:
+          name: EBOOT.PBP
+          path: |
+            EBOOT.PBP
+            build/EBOOT.PBP
+            kernel.elf
